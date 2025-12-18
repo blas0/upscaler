@@ -27,3 +27,7 @@ done/
 # Lock files
 bun.lockb
 package-lock.json
+
+# Personal
+.ai/
+.claude/
