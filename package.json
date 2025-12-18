@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/cli.js",
   "bin": {
-    "upscaler": "./dist/cli.js"
+    "upscaler": "dist/cli.js"
   },
   "scripts": {
     "build": "bun build src/cli.tsx --outdir dist --target node",
