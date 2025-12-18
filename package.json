@@ -1,0 +1,58 @@
+{
+  "name": "@blas0/upscaler",
+  "version": "1.0.0",
+  "description": "AI-powered image upscaler using Gemini API",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "upscaler": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun build src/cli.tsx --outdir dist --target node",
+    "start": "bun dist/cli.js",
+    "dev": "bun src/cli.tsx",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "cli",
+    "image",
+    "upscale",
+    "gemini",
+    "ai",
+    "tui"
+  ],
+  "author": "blas0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blas0/upscaler.git"
+  },
+  "homepage": "https://github.com/blas0/upscaler#readme",
+  "bugs": {
+    "url": "https://github.com/blas0/upscaler/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "ink": "^5.1.0",
+    "ink-select-input": "^6.0.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
+    "react": "^18.3.1",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "react-devtools-core": "^7.0.1",
+    "typescript": "^5.7.2"
+  }
+}

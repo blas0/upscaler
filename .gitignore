@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+venv/
+
+# Build output
+dist/
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Image directories
+in/
+out/
+done/
+
+# Lock files
+bun.lockb
+package-lock.json
