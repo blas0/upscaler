@@ -18,8 +18,7 @@ const SUPPORTED_FORMATS = new Set([
   ".bmp",
 ]);
 
-// Model: Gemini 2.5 Flash Image (production-ready image generation)
-const MODEL = "gemini-2.0-flash-exp-image-generation";
+const MODEL = "gemini-3.1-flash-image-preview";
 
 export type Resolution = "1K" | "2K" | "4K";
 export type AspectRatio = "AUTO" | "1:1" | "9:16" | "16:9" | "3:4" | "4:3" | "3:2";
@@ -81,17 +80,17 @@ export async function upscaleImage(
   options: UpscaleOptions
 ): Promise<Buffer | null> {
   try {
-    // Build the prompt with resolution and optional aspect ratio
-    let prompt = `${UPSCALE_PROMPT} Target resolution: ${options.resolution}.`;
-    if (options.aspectRatio !== "AUTO") {
-      prompt += ` Target aspect ratio: ${options.aspectRatio}.`;
-    }
+    const prompt = UPSCALE_PROMPT;
 
     const model = client.getGenerativeModel({
       model: MODEL,
       generationConfig: {
-        // @ts-expect-error - responseModalities is valid for image generation models
-        responseModalities: ["TEXT", "IMAGE"],
+        // @ts-expect-error - responseModalities and imageConfig are valid for image generation models
+        responseModalities: ["IMAGE"],
+        imageConfig: {
+          imageSize: options.resolution === "1K" ? "1K" : options.resolution === "4K" ? "4K" : "2K",
+          ...(options.aspectRatio !== "AUTO" && { aspectRatio: options.aspectRatio }),
+        },
       },
     });
 
@@ -127,11 +126,11 @@ export async function upscaleImage(
   }
 }
 
-export async function saveAsWebp(
+export async function saveAsJpg(
   imageBuffer: Buffer,
   outputPath: string
 ): Promise<void> {
-  await sharp(imageBuffer).webp({ quality: 95 }).toFile(outputPath);
+  await sharp(imageBuffer).jpeg({ quality: 95 }).toFile(outputPath);
 }
 
 export async function moveToComplete(
@@ -171,7 +170,7 @@ export async function processImages(
     const image = images[i];
     const inputPath = path.join(inputDir, image);
     const baseName = path.basename(image, path.extname(image));
-    const outputPath = path.join(outputDir, `${baseName}.webp`);
+    const outputPath = path.join(outputDir, `${baseName}.jpg`);
 
     onProgress({
       current: i + 1,
@@ -183,7 +182,7 @@ export async function processImages(
     const result = await upscaleImage(client, inputPath, options);
 
     if (result) {
-      await saveAsWebp(result, outputPath);
+      await saveAsJpg(result, outputPath);
       await moveToComplete(inputPath, doneDir);
       success++;
       onProgress({
