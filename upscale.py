@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Image Upscaler using Gemini 3 Pro Image (Nano Banana Pro)
-Upscales images to 2K quality, maintains 1:1 aspect ratio, outputs as .webp
+Upscales images to 2K quality, maintains 1:1 aspect ratio, outputs as .jpg
 """
 
 import io
@@ -15,7 +15,7 @@ from PIL import Image as PILImage
 # Configuration
 INPUT_DIR = Path("in")
 OUTPUT_DIR = Path("out")
-MODEL = "gemini-3-pro-image-preview"  # Nano Banana Pro
+MODEL = "gemini-3.1-flash-image-preview"
 TARGET_SIZE = "2K"
 ASPECT_RATIO = "16:9"
 
@@ -80,16 +80,11 @@ def upscale_image(client: genai.Client, image_path: Path) -> PILImage.Image | No
         return None
 
 
-def save_as_webp(image: PILImage.Image, output_path: Path) -> None:
-    """Save image as WebP format with high quality."""
-    # Convert to RGB if necessary (WebP doesn't support all modes)
-    if image.mode in ("RGBA", "P"):
-        # Preserve transparency for RGBA
-        image.save(output_path, "WEBP", quality=95, lossless=False)
-    else:
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-        image.save(output_path, "WEBP", quality=95, lossless=False)
+def save_as_jpg(image: PILImage.Image, output_path: Path) -> None:
+    """Save image as JPEG format with high quality."""
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    image.save(output_path, "JPEG", quality=95)
     print(f"  Saved: {output_path.name}")
 
 
@@ -124,10 +119,9 @@ def main():
         upscaled = upscale_image(client, image_path)
 
         if upscaled:
-            # Save as .webp with original name (sans extension)
-            output_name = image_path.stem + ".webp"
+            output_name = image_path.stem + ".jpg"
             output_path = OUTPUT_DIR / output_name
-            save_as_webp(upscaled, output_path)
+            save_as_jpg(upscaled, output_path)
             success_count += 1
 
     print("\n" + "=" * 50)
